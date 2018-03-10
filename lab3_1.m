@@ -147,8 +147,10 @@ found_point = zeros(0,2);
 if (Yelllow_m(1) > x_c )
     for c = Yelllow_m(1):(Yelllow_m(1)+100)
    
-            r=round(k1*c+intercept);
-     if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8 )&& (im(r,c-1,1)<=251 && im(r,c-1,2)<=251 && im(r,c-1,3)<=251 ) && (im(r,c-2,1)>=251 && im(r,c-2,2)>=251 && im(r,c-2,3)>=251 )
+         r = round(k1*c+intercept);
+          r1 = round(k1*(c-2)+intercept);
+          r2= round(k1*(c-4)+intercept);
+   if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8 )&& (im(r1,c-2,1)<=20 && im(r1,c-2,2)<=20 && im(r1,c-2,3)<=20 ) && (im(r2,c-4,1)>=251 && im(r2,c-4,2)>=251 && im(r2,c-4,3)>=251 )      
            found_point =[c,r];
               break;
         end
