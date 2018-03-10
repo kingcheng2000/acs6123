@@ -1,10 +1,11 @@
 close all;
 clear all;
- 
+clc
 %% Reading image
 im = imread('Treasure_easy.jpg'); % change name to process other images
 figure,
 imshow(im); 
+info = imfinfo('Treasure_easy.jpg');
 
 %% Binarisation
 bin_threshold = 0.05; % parameter to vary
@@ -37,9 +38,9 @@ for i = 1: Idx_props
 end
 % Bounding box1
 
-[nr,nc,np]= size(im);
-newIm= zeros(nr,nc,np);
-newIm= uint8(newIm);
+% [nr,nc,np]= size(im);
+% newIm= zeros(nr,nc,np);
+% newIm= uint8(newIm);
 
 %% Arrow/non-arrow determination
 % You should develop a function arrow_finder, which returns the IDs of the arrow objects. 
@@ -55,17 +56,41 @@ Bound_im = imcrop(im,props(1).BoundingBox);
 figure,
 imshow(Bound_im)
 imhist(Bound_im)
-
-for r = X_bd: (X_bd+X_width)
-     for c = Y_bd:(Y_bd+Y_height)
-        if ( im(r,c,1)>225 && im(r,c,2)>225 && im(r,c,3)>0 )
-           text (X_bd,Y_bd,'arrow','color','white')
-        else
-            text (X_bd,Y_bd,'not a arrow')
-        end
+% figure,
+% for i = 1:Idx_props
+%     Bound_im =imcrop(im,props(i).BoundingBox)
+%     subplot(2,Idx_props,i);
+%     imshow(Bound_im);
+%     subplot(2,Idx_props,Idx_props+i);
+%     imhist(Bound_im);
+% end
+%% color yellow detection 
+% figure;
+% imshow(im);
+% for r= X_bd:(X_bd+X_width)
+%     for c= Y_bd:(Y_bd+Y_height)
+%         if ( im(r,c,1)>247 && im(r,c,2)>218 && im(r,c,3)>234 )
+%          text (X_bd,Y_bd,'arrow','color','black')
+%           endif 
+%         else 
+%           text (X_bd,Y_bd,'not a arrow');
+%           hold on;
+%         end
+%     end
+% end
+%% Area 
+figure;
+imshow(im);
+hold on
+arrow_ind = zeros(0,1);
+for object_id = 1: Idx_props
+     if (props(object_id).Area > 1700)
+      text (props(object_id).BoundingBox(1), props(object_id).BoundingBox(2),'not arrow','color','blue','FontSize',14);
+     else
+      arrow_ind = [arrow_ind ;object_id];
+      text( props(object_id).BoundingBox(1), props(object_id).BoundingBox(2),'arrow','color','blue','FontSize',14);
      end
 end
-
 %% Finding red arrow
 n_arrows = numel(arrow_ind);
 start_arrow_id = 0;
