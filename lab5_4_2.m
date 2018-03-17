@@ -60,7 +60,7 @@ end
     while hasFrame(VidReader)
         frame_RGB =  readFrame(VidReader);
         frame_Gray = rgb2gray(frame_RGB);
-        imshow(frame_RGB);
+%         imshow(frame_RGB);
         hold on;
         bbox = [266, 121, 83, 93];
         rectangle('Position', bbox, 'EdgeColor', 'b');
@@ -118,20 +118,48 @@ plot(in_color_matrix(:,1),in_color_matrix(:,2),'bx');
 hold on
 x =8;
 %%
-%Third constraint proximity constraint of the tracking points
-
+%% Third constraint proximity constraint of the tracking points
+for i = 1: length(in_color_matrix)
+    start_point = [in_color_matrix(i,1),in_color_matrix(i,2)];
+    
+end
+%% 
 % [s_row,s_col] = find(min(in_color_matrix(1)));
 % start_point  = min(in_color_matrix); 
 start_point = [in_color_matrix(1,1),in_color_matrix(1,2)];
 % x_end = max(max(in_color_matrix(1)));
 x_end = 317;
-y_end = max(in_color_matrix(2));
-in_prox_matrix = zeros(0,2);
-for i = start_point(1):6:x_end
-     for j = start_point(2):6:y_end
-         in_prox_matrix =[in_prox_matrix;[i,j]];
-     end
+% y_end = max(in_color_matrix(2));
+y_end = 214;
+D = pdist(in_color_matrix,'euclidean');
+x = 8;
+% for i = 1: length(in_color_matrix)
+%      for j = 1: length(in_color_matrix)
+%          for k =6:100
+%           in_prox_element = [start_point(1),start_point(2)+5];
+%          if (ismember(in_prox_element,in_color_matrix) )
+%          in_prox_matrix = [in_prox_matrix;in_prox_element];
+%          else 
+%              break;
+%          end
+%    
+%      end
+%      end
+% end
+%% 改动的地方
+startp=1;
+in_prox_matrix=in_color_matrix;
+i=0;
+while i<length(in_prox_matrix)-2
+    i=i+1;
+    D=pdist(in_prox_matrix,'euclidean');
+    l=D(startp:startp+length(in_prox_matrix)-i-1)<3;
+    in_prox_matrix(logical([zeros(1,i) l]),:)=[];
+    startp=sum(length(in_prox_matrix)-1:-1:length(in_prox_matrix)-i)+1;
 end
+
+x= 8;
+%%
 plot(in_prox_matrix(:,1),in_prox_matrix(:,2),'gs');
 x =9;
 y =10;
