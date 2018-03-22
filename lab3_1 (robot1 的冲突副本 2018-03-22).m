@@ -8,7 +8,7 @@ imshow(im);
 info = imfinfo('Treasure_hard.jpg');
 
 %% Binarisation
-bin_threshold = 0.05; % parameter to vary ,testing the and trying to fi
+bin_threshold = 0.05; % parameter to vary
 bin_im = im2bw(im, bin_threshold);
 figure,
 imshow(bin_im);  
@@ -31,10 +31,16 @@ end
 % hold off;
 Box_cid = zeros(0,2);
 for i = 1: Idx_props
+    % matrice row extention 
     Box_cid = [Box_cid ; round(props(i).Centroid)];
     str = num2str(Idx_props)
     text(Box_cid(1),Box_cid(2),str,'Color','red','FontSize',14);
 end
+% Bounding box1
+
+% [nr,nc,np]= size(im);
+% newIm= zeros(nr,nc,np);
+% newIm= uint8(newIm);
 
 %% Arrow/non-arrow determination
 % You should develop a function arrow_finder, which returns the IDs of the arrow objects. 
@@ -88,7 +94,6 @@ end
 %% Finding red arrow
 n_arrows = numel(arrow_ind);
 start_arrow_id = 0;
-x=8;
 % check each arrow until find the red one
 for arrow_num = 1 : n_arrows
     object_id = arrow_ind(arrow_num);    % determine the arrow id
@@ -101,8 +106,6 @@ for arrow_num = 1 : n_arrows
         break;
     end
 end
-
-
 %% Central point of yellow area 
 % yellow area matrix
 cur_object = start_arrow_id; % start from the red arrow
@@ -121,68 +124,68 @@ newIm_idx =zeros(0,2);
 % yellow area coordinates
 r = x: (x+x1)
 c= y:(y+y1) 
-while(0<r<480)
 for r = y:(y+y1)  
         for c= x:(x+x1)  
-        if ( (239<im(r,c,1)<241) && (223<im(r,c,2)<234) && (25<im(r,c,3)<30))
+        if ( (230<im(r,c,1)) && (192<im(r,c,2)) && (im(r,c,3)<50))
             % white feather of the duck; now change it to yellow
             % yellow_idx =  find(im(r,c));
                 newIm_idx = [newIm_idx;[c r]];
         end
         end
-        end
 end
 
-test_point =8;
-% maximam and minimal slop of line with central point
+% maximam and minimal clop of line with central point
 C = min(newIm_idx);
 B = max(newIm_idx);
 Yelllow_m = median(newIm_idx);
 k1 = (Yelllow_m(2)- props(path).Centroid(2))/(Yelllow_m(1)- props(path).Centroid(1));
 y_s = round(k1* props(path).BoundingBox(1));
+intercept =  y_c - k1*x_c;
+
 %% search for nect objects
-if (Yelllow_m > x_c )
-    for r = Yelllow_m(1):(Yelllow_m(1)+100)
-        while(0<r<640)
-            c = k1*r;
-          if (im(r,c,1)==255 && im(r,c,2)==255 && im(r,c,3)==255 )
-           found_point =[r,c];
-          else 
+found_point = zeros(0,2);
+if (Yelllow_m(1) > x_c )
+    for c = Yelllow_m(1):(Yelllow_m(1)+100)
+         r = round(k1*c+intercept);
+          r1 = round(k1*(c-2)+intercept);
+          r2= round(k1*(c-4)+intercept);
+   if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8 )&& (im(r1,c-2,1)<=20 && im(r1,c-2,2)<=20 && im(r1,c-2,3)<=20 ) && (im(r2,c-4,1)>=251 && im(r2,c-4,2)>=251 && im(r2,c-4,3)>=251 )      
+           found_point =[c,r];
               break;
-        end
         end
     end
    else
-    for r = Yelllow_m(1):(Yelllow_m(1)-100)
-               if (0<r<640)
-            c = k1*r;
-          if (im(r,c,1)==255 && im(r,c,2)==255 && im(r,c,3)==255 )
-           found_point =[r,c];
-          else 
-              break;
+    for c = Yelllow_m(1):-1:(Yelllow_m(1)-100)  
+          r = round(k1*c+intercept);
+          r1 = round(k1*(c-2)+intercept);
+          r2= round(k1*(c-4)+intercept);
+   if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8 )&& (im(r1,c-2,1)<=20 && im(r1,c-2,2)<=20 && im(r1,c-2,3)<=20 ) && (im(r2,c-4,1)>=251 && im(r2,c-4,2)>=251 && im(r2,c-4,3)>=251 )      
+           found_point =[c,r];
+           break;
         end
-    end
-    end
-end
-%%
-
-found_point = zeros(0,2);
-for i = 1: Idx_props
-    for r= round(props(i).BoundingBox(1)): (round(props(i).BoundingBox(1))+80)
-        for  c=y_s:(y_s+120)
-            if ( 0<r<68 && 0<c<480)
-            if (im(r,c,1)==255 && im(r,c,2)==255 && im(r,c,3)==255 )
-                found_point =[r,c];
-            end
-            else
-                break;
-        end  
-    end
     end
 end
 %% Hunting
 cur_object = start_arrow_id; % start from the red arrow
 path = cur_object;
+M_boubox = zeros(0,3);
+for i = 1:Idx_props
+     for r = props(i).BoundingBox(2):(props(i).BoundingBox(2)+props(i).BoundingBox(4))
+         for c = props(i).BoundingBox(1):(props(i).BoundingBox(1)+props(i).BoundingBox(3))
+             M_boubox = [M_boubox;[c,r,i]];
+         end
+     end
+    
+end
+M_boubox12 = M_boubox(:,1:2);
+x =6;
+for i = 1:Idx_props
+    if (ismember(found_point,M_boubox12))
+        cur_inx = i;
+        break;
+    end
+end
+x=6;
 
 % while the current object is an arrow, continue to search
 while ismember(cur_object, arrow_ind) 
