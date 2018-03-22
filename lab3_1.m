@@ -29,12 +29,17 @@ for object_id = 1 : n_objects
     rectangle('Position', props(object_id).BoundingBox, 'EdgeColor', 'b');
 end
 % hold off;
+Box_matrix = zeros(0,4);
 Box_cid = zeros(0,2);
+% new matrix build according to bounding box 
 for i = 1: Idx_props
     Box_cid = [Box_cid ; round(props(i).Centroid)];
-    str = num2str(Idx_props)
+    Box_matrix = [Box_matrix ;[round(props(i).BoundingBox(1)),round(props(i).BoundingBox(2)),round(props(i).BoundingBox(3)),round(props(i).BoundingBox(4))]];
+ 
+    str = num2str(Idx_props);
     text(Box_cid(1),Box_cid(2),str,'Color','red','FontSize',14);
 end
+   Box_stru = struct('x_aix',Box_matrix(:,1),'y_aix',Box_matrix(:,2),'x_length',Box_matrix(:,3),'y_length',Box_matrix(:,4));
 
 %% Arrow/non-arrow determination
 % You should develop a function arrow_finder, which returns the IDs of the arrow objects. 
@@ -50,28 +55,7 @@ Bound_im = imcrop(im,props(1).BoundingBox);
 figure,
 imshow(Bound_im)
 imhist(Bound_im)
-% figure,
-% for i = 1:Idx_props
-%     Bound_im =imcrop(im,props(i).BoundingBox)
-%     subplot(2,Idx_props,i);
-%     imshow(Bound_im);
-%     subplot(2,Idx_props,Idx_props+i);
-%     imhist(Bound_im);
-% end
-%% color yellow detection 
-% figure;
-% imshow(im);
-% for r= X_bd:(X_bd+X_width)
-%     for c= Y_bd:(Y_bd+Y_height)
-%         if ( im(r,c,1)>247 && im(r,c,2)>218 && im(r,c,3)>234 )
-%          text (X_bd,Y_bd,'arrow','color','black')
-%           endif 
-%         else 
-%           text (X_bd,Y_bd,'not a arrow');
-%           hold on;
-%         end
-%     end
-% end
+
 %% Area 
 figure;
 imshow(im);
@@ -88,7 +72,6 @@ end
 %% Finding red arrow
 n_arrows = numel(arrow_ind);
 start_arrow_id = 0;
-x=8;
 % check each arrow until find the red one
 for arrow_num = 1 : n_arrows
     object_id = arrow_ind(arrow_num);    % determine the arrow id
@@ -102,7 +85,25 @@ for arrow_num = 1 : n_arrows
     end
 end
 
+%% Detection of yellow area
+cur_object = start_arrow_id; % start from the red arrow
+path = cur_object;
+yellow_matrix = zeros(0,2);
 
+ 
+for i =  1:Box_stru(cur_object).y_length
+    for j = 1:Box_stru(cur_object).x_length
+        c = Box_stru.x_aix-1+i;
+        r = Box_stru.y_aix-1+j;
+      if ( im(r,c,1)>247 && im(r,c,2)>218 && im(r,c,3)>234 )
+         yellow_matrix = [yellow_matrix;[c,r]];  
+         text (X_bd,Y_bd,'arrow','color','black')
+      end
+    end
+     
+end
+
+test_point =8;
 %% Central point of yellow area 
 % yellow area matrix
 cur_object = start_arrow_id; % start from the red arrow
