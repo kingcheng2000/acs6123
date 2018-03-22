@@ -1,6 +1,10 @@
+
+function  [Is_arrow] = arrow_finder(round(x,y)
+
+x_topleft=props.BoundingBox(1));
+y_topleft=props.BoundingBox(2));
+
 n_objects = numel(props);
-function  arrow_finder(n_objects)
-find arrow in image
 detaile information 
 arrow_ind = 0;
 Area_thrd = 1500;
