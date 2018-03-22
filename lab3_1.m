@@ -146,7 +146,6 @@ intercept =  y_c - k1*x_c;
 found_point = zeros(0,2);
 if (Yelllow_m(1) > x_c )
     for c = Yelllow_m(1):(Yelllow_m(1)+100)
-   
          r = round(k1*c+intercept);
           r1 = round(k1*(c-2)+intercept);
           r2= round(k1*(c-4)+intercept);
@@ -156,8 +155,7 @@ if (Yelllow_m(1) > x_c )
         end
     end
    else
-    for c = Yelllow_m(1):-1:(Yelllow_m(1)-100)
-              
+    for c = Yelllow_m(1):-1:(Yelllow_m(1)-100)  
           r = round(k1*c+intercept);
           r1 = round(k1*(c-2)+intercept);
           r2= round(k1*(c-4)+intercept);
@@ -167,25 +165,27 @@ if (Yelllow_m(1) > x_c )
         end
     end
 end
-%%
-
-x =6
-for i = 1: Idx_props
-    for r= round(props(i).BoundingBox(1)): (round(props(i).BoundingBox(1))+80)
-        for  c=y_s:(y_s+120)
-            if ( 0<r<68 && 0<c<480)
-            if (im(r,c,1)==255 && im(r,c,2)==255 && im(r,c,3)==255 )
-                found_point =[r,c];
-            end
-            else
-                break;
-        end  
-    end
-    end
-end
 %% Hunting
 cur_object = start_arrow_id; % start from the red arrow
 path = cur_object;
+M_boubox = zeros(0,3);
+for i = 1:Idx_props
+     for r = props(i).BoundingBox(2):(props(i).BoundingBox(2)+props(i).BoundingBox(4))
+         for c = props(i).BoundingBox(1):(props(i).BoundingBox(1)+props(i).BoundingBox(3))
+             M_boubox = [M_boubox;[c,r,i]];
+         end
+     end
+    
+end
+M_boubox12 = M_boubox(:,1:2);
+x =6;
+for i = 1:Idx_props
+    if (ismember(found_point,M_boubox12))
+        cur_inx = i;
+        break;
+    end
+end
+x=6;
 
 % while the current object is an arrow, continue to search
 while ismember(cur_object, arrow_ind) 
