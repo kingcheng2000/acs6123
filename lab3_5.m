@@ -20,46 +20,93 @@ props = regionprops(con_com);
 
 %% Drawing bounding boxes
 n_objects = numel(props);
+figure;
 imshow(im);
 hold on;
 for object_id = 1 : n_objects
     rectangle('Position', props(object_id).BoundingBox, 'EdgeColor', 'b');
 end
 hold off;
-%% build data structure yellow area data sets, bounding box data sets 
 
-
-check_point =8;
 %% Arrow/non-arrow determination
-% You should develop a function arrow_finder, which returns the IDs of the arror objects. 
-% IDs are from the connected component analysis order. You may use any parameters for your function. 
 
- 
 arrow_ind = arrow_finder();
-
-check_point =8;
-
-
+%% build data structure Bounding box data sets AND Yellow area data sets, 
+Yellow_matrix = zeros(0,2);
+Yellow_dataset = zeros(0,2);
+iteration =0;
 for i = 1:length(props)
    box_x = round(props(i).BoundingBox(1));
    box_y = round(props(i).BoundingBox(2));
    x_length= round(props(i).BoundingBox(3));
    y_length= round(props(i).BoundingBox(4));
    Boundbox_dataset= zeros(0,2);
-   for j = box_x :box_x+x_length
-       for k = box_y :box_y+y_length
-           Boundbox_dataset = [Boundbox_dataset;[j,k]];
+   for c = box_x :box_x+x_length
+       for r = box_y :box_y+y_length
+           Boundbox_dataset = [Boundbox_dataset;[c,r]];
+                 if ( im(r,c,1)>250 && im(r,c,2)>230 && im(r,c,3)<50 )
+%                    Yellow_matrix = [Yellow_matrix;[c,r]]; 
+                 end
        end
        if ismember(i,arrow_ind)
            m =1;
        else
            m =0;
        end
+       iteration = iteration +1;
+%        Yellow_dataset = [Yellow_matrix;[c,r]];
+%        yellow_cid = mean(Yellow_matrix);
+%        Bounding_box_stru(i) = struct('Index',i,'Matrix',Boundbox_dataset,'Yellow_matrix',Yellow_matrix,'Yellow_cid',yellow_cid,'Is_arrow',m); 
        Bounding_box_stru(i) = struct('Index',i,'Matrix',Boundbox_dataset,'Is_arrow',m); 
+
    end
-   
+    
 end 
 
+
+
+
+check_point =8;
+%% Detection of yellow area
+% cur_object = start_arrow_id; % start from the red arrow
+% path = cur_object;
+for i = 1: length(props)
+    
+Yellow_matrix = zeros(0,2);
+yellow_cid = zeros(0,2);
+
+   box_x = round(props(i).BoundingBox(1));
+   box_y = round(props(i).BoundingBox(2));
+   x_length= round(props(i).BoundingBox(3));
+   y_length= round(props(i).BoundingBox(4));
+
+for c = box_x: box_x + x_length 
+    for r = box_y: box_y+y_length
+    if ( im(r,c,1)>250 && im(r,c,2)>230 && im(r,c,3)<50 )
+         Yellow_matrix = [Yellow_matrix;[c,r]];  
+         yellow_cid = mean(Yellow_matrix);
+%          text (X_bd,Y_bd,'arrow','color','black')
+     end
+      iteration = iteration +1;
+    end  
+    Yellow_matrix_stru(i) = struct('Index',i,'Matrix',Yellow_matrix,'Yellow_cid',yellow_cid); 
+    end
+end
+
+
+% Central point of yellow area 
+check_point =8;
+yellow_cid = mean(Yellow_matrix);
+
+x_yellow_cid =yellow_cid(1);
+y_yellow_cid =-yellow_cid(2);
+y_cid = -props(cur_object).Centroid(2);
+x_cid = props(cur_object).Centroid(1);
+
+k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
+y_s = round(k1* props(path).BoundingBox(1));
+intercept =  y_yellow_cid - k1*x_yellow_cid;
+check_point = 8;
 %% Finding red arrow
 n_arrows = numel(arrow_ind);
 start_arrow_id = 0;
