@@ -1,27 +1,19 @@
 
-function  [Is_arrow] = arrow_finder(round(x,y)
+function  [arrow_ind] = arrow_finder()
 
-x_topleft=props.BoundingBox(1));
-y_topleft=props.BoundingBox(2));
+object_id = evalin('base','object_id');
+props = evalin('base','props');
+arrow_ind = zeros(0,1); 
 
-n_objects = numel(props);
-detaile information 
-arrow_ind = 0;
-Area_thrd = 1500;
+for object_id = 1: length(props)
+     if (props(object_id).Area > 1700)
+      text (props(object_id).BoundingBox(1), props(object_id).BoundingBox(2),'not arrow','color','blue','FontSize',14);
+     else
+      arrow_ind = [arrow_ind ;object_id];
+      str = num2str(object_id);
+      text( props(object_id).BoundingBox(1), props(object_id).BoundingBox(2),str,'color','blue','FontSize',14);
+     end
+end
 
-im = imread('Treasure_hard.jpg'); % change name to process other images
-bin_threshold = 0.05; % parameter to vary
-bin_im = im2bw(im, bin_threshold);
-con_com = bwlabel(bin_im);
-props = regionprops(con_com);
-n_objects = numel(props);
-arrow_ind =0;
-Box_end = n_objects;
-for i = 1:Box_end
-    if props.(i)Area < Area_thrd;
-        Box_id = i;
-    else 
-        Box_id = Box_id+1 
 end
-end
-end
+
