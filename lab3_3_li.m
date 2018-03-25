@@ -73,7 +73,7 @@ for object_id = 1: Idx_props
      if (props(object_id).Area > 1700)
       text (props(object_id).BoundingBox(1), props(object_id).BoundingBox(2),'not arrow','color','blue','FontSize',14);
      else
-      arrow_ind = [arrow_ind ;object_id];
+      arrow_ind(length(arrow_ind) + 1) = object_id;
       str = num2str(object_id);
       text( props(object_id).BoundingBox(1), props(object_id).BoundingBox(2),str,'color','blue','FontSize',14);
      end
@@ -151,7 +151,7 @@ arrow_box = props(cur_object);
 
 current_id = start_arrow_id;
 arrow_pass = zeros(0,2);
-arrow_pass = [arrow_pass; current_id];
+arrow_pass(1) = current_id;
 arrow_discard = zeros(0,2);
 is_found = true;
 distance_weight = 0.7;
@@ -164,9 +164,9 @@ while is_found
     % arrow. You may use any other parameters for your function.
     [is_found, next_id, cost] = find_next_arrow(current_id, arrow_pass, arrow_discard, ArrowInfo, distance_weight, angle_weight);
     
-    if current_id == 3
-        testa = 0;
-    end
+%     if current_id == 27
+%         testa = 0;
+%     end
     
     if is_found
         is_discard = 0;
@@ -175,14 +175,14 @@ while is_found
             [d, last_cost] = get_cost(ArrowInfo, arrow_pass(last_index), next_id, distance_weight, angle_weight);
             
             if(cost > last_cost)
-                arrow_discard = [arrow_discard, arrow_pass(length(arrow_pass))];
+                arrow_discard(length(arrow_discard) + 1) = arrow_pass(length(arrow_pass));
                 arrow_pass(length(arrow_pass)) = [];
                 is_discard = 1;
             end
         end
         
         if is_discard ~= 1
-            arrow_pass = [arrow_pass; next_id];
+            arrow_pass(length(arrow_pass) + 1) = next_id;
             current_id = next_id;
         end
     end
@@ -204,23 +204,26 @@ treasure_id = path(end);
 rectangle('Position', props(treasure_id).BoundingBox, 'EdgeColor', 'g');
 
 function central_point = find_yellow_circle_central_point(box, img)
-    yellow_matrix_temp = zeros(0,2);
+    yellow_matrix = zeros(0,2);
     x_length = round(box.BoundingBox(3));
     y_length = round(box.BoundingBox(4));
-
+    index = 1;
+    
     for i =  1:y_length
         for j = 1:x_length
             c = round(box.BoundingBox(1))-1+j;
             r = round(box.BoundingBox(2))-1+i;
           if ( img(r,c,1)>220 && img(r,c,2)>67 && img(r,c,3)<40 )
-             yellow_matrix_temp = [yellow_matrix_temp;[c,r]];  
+             yellow_matrix(index, 1) = c;  
+             yellow_matrix(index, 2) = r;  
+             index = index + 1;
           end
         end
 
     end
     % Central point of yellow area 
 
-    central_point = mean(yellow_matrix_temp);
+    central_point = mean(yellow_matrix);
 end
 
 function [k, b ,direct] = get_line_param(point1, point2)
