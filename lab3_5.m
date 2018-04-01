@@ -3,7 +3,7 @@ clear all;
 clc
 
 %% Reading image
-im = imread('Treasure_hard.jpg'); % change name to process other images
+im = imread('Treasure_easy.jpg'); % change name to process other images
 imshow(im);
 
 %% Binarisation
@@ -108,44 +108,44 @@ yellow_cid = mean(Yellow_matrix);
 
 x_yellow_cid =yellow_cid(1);
 y_yellow_cid =-yellow_cid(2);
-y_cid = -props(cur_object).Centroid(2);
+y_cid = props(cur_object).Centroid(2);
 x_cid = props(cur_object).Centroid(1);
 
-k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
+k1 = (y_yellow_cid - y_cid)/(x_yellow_cid-x_cid);
 y_s = round(k1* props(path).BoundingBox(1));
 intercept =  y_yellow_cid - k1*x_yellow_cid;
 
 %% plot arrow in spatial 
-figure;
-
-P1_x = Bounding_box_stru.Matrix;
-plot(P1_x(:,1),-P1_x(:,2),'rx');
-axis([0 640 -480 0])
-hold on
-P1_cx =props(1).Centroid
-plot(P1_cx(1),-P1_cx(2),'bo')
-hold on 
-P1_yx = Yellow_matrix_stru.Yellow_cid
-plot(P1_yx(1),-P1_yx(2),'go')
-hold on 
-
-P2_x = Bounding_box_stru(2).Matrix;
-plot(P2_x(:,1),-P2_x(:,2),'rx');
-axis([0 640 -480 0])
-hold on
-P2_cx =props(2).Centroid
-plot(P2_cx(1),-P2_cx(2),'bo')
-hold on 
-P2_yx = Yellow_matrix_stru(2).Yellow_cid
-plot(P2_yx(1),-P2_yx(2),'go')
-hold on 
-
-kp = (-P1_cx(2)+ P1_yx(2))/(P1_cx(1)-P1_yx(1));
-p_intercept = -P1_yx(2)- kp*P1_yx(1);
-p_x= 0:1:100;
-p_y = kp*p_x + p_intercept
-plot(p_x,p_y,'k-')
-check_point = 8;
+% figure;
+% 
+% P1_x = Bounding_box_stru.Matrix;
+% plot(P1_x(:,1),-P1_x(:,2),'rx');
+% axis([0 640 -480 0])
+% hold on
+% P1_cx =props(1).Centroid
+% plot(P1_cx(1),-P1_cx(2),'bo')
+% hold on 
+% P1_yx = Yellow_matrix_stru.Yellow_cid
+% plot(P1_yx(1),-P1_yx(2),'go')
+% hold on 
+% 
+% P2_x = Bounding_box_stru(2).Matrix;
+% plot(P2_x(:,1),-P2_x(:,2),'rx');
+% axis([0 640 -480 0])
+% hold on
+% P2_cx =props(2).Centroid
+% plot(P2_cx(1),-P2_cx(2),'bo')
+% hold on 
+% P2_yx = Yellow_matrix_stru(2).Yellow_cid
+% plot(P2_yx(1),-P2_yx(2),'go')
+% hold on 
+% 
+% kp = (-P1_cx(2)+ P1_yx(2))/(P1_cx(1)-P1_yx(1));
+% p_intercept = -P1_yx(2)- kp*P1_yx(1);
+% p_x= 0:1:100;
+% p_y = kp*p_x + p_intercept
+% plot(p_x,p_y,'k-')
+% check_point = 8;
 %% Hunting
 cur_object = start_arrow_id; % start from the red arrow
 path = cur_object;
