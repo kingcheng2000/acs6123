@@ -3,7 +3,7 @@ clear all;
 clc
 
 %% Reading image
-im = imread('Treasure_easy.jpg'); % change name to process other images
+im = imread('Treasure_medium.jpg'); % change name to process other images
 imshow(im);
 
 %% Binarisation

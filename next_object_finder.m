@@ -9,7 +9,7 @@ arrow_ind = zeros(0,1);
 arrow_ind = evalin('base','arrow_ind');
 
 %% Reading image
-im = imread('Treasure_easy.jpg'); % change name to process other images
+im = imread('Treasure_medium.jpg'); % change name to process other images
 imshow(im);
 
 %% Binarisation
@@ -114,23 +114,26 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
  end
 
  else 
-      for  r = Hunting_start_r:direction:Hunting_end_r 
-      r1 = r + step;
-      r2 = r + 2*step;
+     
+      direction = -((y_yellow_cid-y_cid)/abs(y_yellow_cid-y_cid));
+     for  r = Hunting_start_r:direction:Hunting_end_r 
+          r1 = r + step;
+          r2 = r + 2*step;
+
+          c = round((-r-intercept)/k1);
+          c1 = round((-r1-intercept)/k1);
+          c2 = round((-r2-intercept)/k1);
       
-      c = round((-r-intercept)/k1);
-      c1 = round((-r1-intercept)/k1);
-      c2 = round((-r2-intercept)/k1);
       if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=251 && im(r1,c1,2)<=251 && im(r1,c1,3)<=251) && (im(r2,c2,1)>=251 && im(r2,c2,2)>=251 && im(r2,c2,3)>=251)
-      found_point =[c2,r2];
+          found_point =[c2,r2];
       break;
       end
+      
+      end   
      
-      end
- end
- 
 
- checkpint = 8;
+ end
+
  figure,
    dataset_found_point = zeros(0,2);
   dataset_found_point = [dataset_found_point;[x_cid,y_cid]];
