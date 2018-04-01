@@ -29,7 +29,6 @@ end
 hold off;
 
 %% Arrow/non-arrow determination
-
 arrow_ind = arrow_finder();
 %% build data structure Bounding box data sets AND Yellow area data sets, 
 Yellow_matrix = zeros(0,2);
@@ -63,13 +62,24 @@ for i = 1:length(props)
     
 end 
 
-
-
-
-check_point =8;
+%% Finding red arrow
+n_arrows = numel(arrow_ind);
+start_arrow_id = 0;
+% check each arrow until find the red one
+for arrow_num = 1 : n_arrows
+    object_id = arrow_ind(arrow_num);    % determine the arrow id
+    % extract colour of the centroid point of the current arrow
+    centroid_colour = im(round(props(object_id).Centroid(2)), round(props(object_id).Centroid(1)), :); 
+    if centroid_colour(:, :, 1) > 240 && centroid_colour(:, :, 2) < 10 && centroid_colour(:, :, 3) < 10
+	% the centroid point is red, memorise its id and break the loop
+        start_arrow_id = object_id;
+        break;
+    end
+end
+ 
 %% Detection of yellow area
-% cur_object = start_arrow_id; % start from the red arrow
-% path = cur_object;
+cur_object = start_arrow_id; % start from the red arrow
+path = cur_object;
 for i = 1: length(props)
     
 Yellow_matrix = zeros(0,2);
@@ -93,9 +103,7 @@ for c = box_x: box_x + x_length
     end
 end
 
-
 % Central point of yellow area 
-check_point =8;
 yellow_cid = mean(Yellow_matrix);
 
 x_yellow_cid =yellow_cid(1);
@@ -106,24 +114,38 @@ x_cid = props(cur_object).Centroid(1);
 k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
 y_s = round(k1* props(path).BoundingBox(1));
 intercept =  y_yellow_cid - k1*x_yellow_cid;
-check_point = 8;
-%% Finding red arrow
-n_arrows = numel(arrow_ind);
-start_arrow_id = 0;
-% check each arrow until find the red one
-for arrow_num = 1 : n_arrows
-    object_id = arrow_ind(arrow_num);    % determine the arrow id
-    
-    % extract colour of the centroid point of the current arrow
-    centroid_colour = im(round(props(object_id).Centroid(2)), round(props(object_id).Centroid(1)), :); 
-    if centroid_colour(:, :, 1) > 240 && centroid_colour(:, :, 2) < 10 && centroid_colour(:, :, 3) < 10
-	% the centroid point is red, memorise its id and break the loop
-        start_arrow_id = object_id;
-        break;
-    end
-end
 
- 
+%% plot arrow in spatial 
+figure;
+
+P1_x = Bounding_box_stru.Matrix;
+plot(P1_x(:,1),-P1_x(:,2),'rx');
+axis([0 640 -480 0])
+hold on
+P1_cx =props(1).Centroid
+plot(P1_cx(1),-P1_cx(2),'bo')
+hold on 
+P1_yx = Yellow_matrix_stru.Yellow_cid
+plot(P1_yx(1),-P1_yx(2),'go')
+hold on 
+
+P2_x = Bounding_box_stru(2).Matrix;
+plot(P2_x(:,1),-P2_x(:,2),'rx');
+axis([0 640 -480 0])
+hold on
+P2_cx =props(2).Centroid
+plot(P2_cx(1),-P2_cx(2),'bo')
+hold on 
+P2_yx = Yellow_matrix_stru(2).Yellow_cid
+plot(P2_yx(1),-P2_yx(2),'go')
+hold on 
+
+kp = (-P1_cx(2)+ P1_yx(2))/(P1_cx(1)-P1_yx(1));
+p_intercept = -P1_yx(2)- kp*P1_yx(1);
+p_x= 0:1:100;
+p_y = kp*p_x + p_intercept
+plot(p_x,p_y,'k-')
+check_point = 8;
 %% Hunting
 cur_object = start_arrow_id; % start from the red arrow
 path = cur_object;

@@ -1,6 +1,7 @@
 
 function  [arrow_ind] = arrow_finder()
-
+% Distinguish arrow and non-arrow objects 
+% Call variable object_id, props from main program
 object_id = evalin('base','object_id');
 props = evalin('base','props');
 arrow_ind = zeros(0,1); 
