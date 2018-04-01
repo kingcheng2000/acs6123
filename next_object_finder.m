@@ -9,7 +9,7 @@ arrow_ind = zeros(0,1);
 arrow_ind = evalin('base','arrow_ind');
 
 %% Reading image
-im = imread('Treasure_hard.jpg'); % change name to process other images
+im = imread('Treasure_easy.jpg'); % change name to process other images
 imshow(im);
 
 %% Binarisation
@@ -78,6 +78,7 @@ x_cid = props(cur_object).Centroid(1);
 k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
 y_s = round(k1* props(path).BoundingBox(1));
 intercept =  y_yellow_cid - k1*x_yellow_cid;
+
 %% search for next objects
 % Arrow direction detection 
  direction = 1;
@@ -94,10 +95,11 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
  found_point =zeros(0,2);
  Hunting_start_c = round(yellow_cid(1));
  Hunting_end_c = round(yellow_cid(1)+ 100* direction);
- Hunting_start_r = round(yellow_cid(1));
- Hunting_end_r = round(yellow_cid(1)+ 100* direction);
+ Hunting_start_r = round(yellow_cid(2));
+ Hunting_end_r = round(yellow_cid(2)+ 100* direction);
  
  step = 2*direction;
+ if abs(k1) <3.7
  for  c = Hunting_start_c:direction:Hunting_end_c 
       c1 = c + step;
       c2 = c + 2*step;
@@ -105,14 +107,27 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
       r = -round(k1*c+intercept);
       r1 = -round(k1*(c1)+intercept);
       r2 = -round(k1*(c2)+intercept);
-
       if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=251 && im(r1,c1,2)<=251 && im(r1,c1,3)<=251) && (im(r2,c2,1)>=251 && im(r2,c2,2)>=251 && im(r2,c2,3)>=251)
       found_point =[c2,r2];
       break;
-      else 
       end
  end
 
+ else 
+      for  r = Hunting_start_r:direction:Hunting_end_r 
+      r1 = r + step;
+      r2 = r + 2*step;
+      
+      c = round((-r-intercept)/k1);
+      c1 = round((-r1-intercept)/k1);
+      c2 = round((-r2-intercept)/k1);
+      if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=251 && im(r1,c1,2)<=251 && im(r1,c1,3)<=251) && (im(r2,c2,1)>=251 && im(r2,c2,2)>=251 && im(r2,c2,3)>=251)
+      found_point =[c2,r2];
+      break;
+      end
+     
+      end
+ end
  
 
  checkpint = 8;
