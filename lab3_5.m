@@ -108,10 +108,10 @@ yellow_cid = mean(Yellow_matrix);
 
 x_yellow_cid =yellow_cid(1);
 y_yellow_cid =-yellow_cid(2);
-y_cid = -props(cur_object).Centroid(2);
+y_cid = props(cur_object).Centroid(2);
 x_cid = props(cur_object).Centroid(1);
 
-k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
+k1 = (y_yellow_cid - y_cid)/(x_yellow_cid-x_cid);
 y_s = round(k1* props(path).BoundingBox(1));
 intercept =  y_yellow_cid - k1*x_yellow_cid;
 
@@ -139,13 +139,13 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
 % P2_yx = Yellow_matrix_stru(2).Yellow_cid
 % plot(P2_yx(1),-P2_yx(2),'go')
 % hold on 
-
+% 
 % kp = (-P1_cx(2)+ P1_yx(2))/(P1_cx(1)-P1_yx(1));
 % p_intercept = -P1_yx(2)- kp*P1_yx(1);
 % p_x= 0:1:100;
 % p_y = kp*p_x + p_intercept
 % plot(p_x,p_y,'k-')
-check_point = 8;
+% check_point = 8;
 %% Hunting
 cur_object = start_arrow_id; % start from the red arrow
 path = cur_object;

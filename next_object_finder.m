@@ -10,12 +10,20 @@ arrow_ind = evalin('base','arrow_ind');
 
 %% Reading image
 im = imread('Treasure_medium.jpg'); % change name to process other images
+<<<<<<< HEAD
 %imshow(im);
+=======
+imshow(im);
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
 
 %% Binarisation
 bin_threshold = 0.05; % parameter to vary
 bin_im = im2bw(im, bin_threshold);
+<<<<<<< HEAD
 %imshow(bin_im);
+=======
+imshow(bin_im);
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
 
 %% Extracting connected components
 con_com = bwlabel(bin_im);
@@ -74,6 +82,13 @@ x_yellow_cid =yellow_cid(1);
 y_yellow_cid =-yellow_cid(2);
 y_cid = -props(cur_object).Centroid(2);
 x_cid = props(cur_object).Centroid(1);
+<<<<<<< HEAD
+=======
+
+k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
+y_s = round(k1* props(path).BoundingBox(1));
+intercept =  y_yellow_cid - k1*x_yellow_cid;
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
 
 k1 = (y_yellow_cid- y_cid)/(x_yellow_cid-x_cid);
 y_s = round(k1* props(path).BoundingBox(1));
@@ -82,7 +97,11 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
 % Arrow direction detection 
  direction = 1;
  
+<<<<<<< HEAD
  if abs(x_yellow_cid) < abs(x_cid)
+=======
+ if x_yellow_cid < x_cid
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
      direction =-1
  else 
       direction = 1
@@ -94,6 +113,7 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
  found_point =zeros(0,2);
  Hunting_start_c = round(yellow_cid(1));
  Hunting_end_c = round(yellow_cid(1)+ 100* direction);
+<<<<<<< HEAD
  if (Hunting_end_c<0)
      Hunting_end_c = 0;
  end
@@ -105,6 +125,13 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
  step = 2*direction;
  if abs(k1) <10
  
+=======
+ Hunting_start_r = round(yellow_cid(2));
+ Hunting_end_r = round(yellow_cid(2)+ 100* direction);
+ 
+ step = 2*direction;
+ if abs(k1) <3.7
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
  for  c = Hunting_start_c:direction:Hunting_end_c 
       c1 = c + step;
       c2 = c + 2*step;
@@ -112,16 +139,43 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
       r = -round(k1*c+intercept);
       r1 = -round(k1*(c1)+intercept);
       r2 = -round(k1*(c2)+intercept);
+<<<<<<< HEAD
 
       if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=251 && im(r1,c1,2)<=251 && im(r1,c1,3)<=251) && (im(r2,c2,1)>=251 && im(r2,c2,2)>=251 && im(r2,c2,3)>=251)
       found_point =[c2,r2];
       break;
       elseif (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=50 || im(r1,c1,2)<=50 || im(r1,c1,3)<=50) && (im(r2,c2,1)>=50 || im(r2,c2,2)>=50 || im(r2,c2,3)>=50)
       found_point =[c2,r2];
+=======
+      if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=251 && im(r1,c1,2)<=251 && im(r1,c1,3)<=251) && (im(r2,c2,1)>=251 && im(r2,c2,2)>=251 && im(r2,c2,3)>=251)
+      found_point =[c2,r2];
+      break;
+      end
+ end
+
+ else 
+     
+      direction = -((y_yellow_cid-y_cid)/abs(y_yellow_cid-y_cid));
+     for  r = Hunting_start_r:direction:Hunting_end_r 
+          r1 = r + step;
+          r2 = r + 2*step;
+
+          c = round((-r-intercept)/k1);
+          c1 = round((-r1-intercept)/k1);
+          c2 = round((-r2-intercept)/k1);
+      
+      if (im(r,c,1)<=8 && im(r,c,2)<=8 && im(r,c,3)<=8) && (im(r1,c1,1)<=251 && im(r1,c1,2)<=251 && im(r1,c1,3)<=251) && (im(r2,c2,1)>=251 && im(r2,c2,2)>=251 && im(r2,c2,3)>=251)
+          found_point =[c2,r2];
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
       break;
       else 
       end
+      
+      end   
+     
+
  end
+<<<<<<< HEAD
  else
        if abs(y_yellow_cid) < abs(y_cid)
           direction =-1
@@ -155,6 +209,9 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
  
 
  checkpint = 8;
+=======
+
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
  figure,
    dataset_found_point = zeros(0,2);
   dataset_found_point = [dataset_found_point;[x_cid,y_cid]];
@@ -166,7 +223,11 @@ intercept =  y_yellow_cid - k1*x_yellow_cid;
 for i = 1: length(Bounding_box_stru)
     if ismember(found_point(1),Bounding_box_stru(i).Matrix(:,1)) && ismember(found_point(2),Bounding_box_stru(i).Matrix(:,2))
          checkpint = 8;
+<<<<<<< HEAD
       %  if Bounding_box_stru(i).Is_arrow ==1
+=======
+        if Bounding_box_stru(i).Is_arrow ==1
+>>>>>>> d488044d4f94833e15f5b111d1b3b7646eeacfa9
         cur_object =Bounding_box_stru(i).Index;
         assignin('base', 'cur_object', Bounding_box_stru(i).Index);
         break;
